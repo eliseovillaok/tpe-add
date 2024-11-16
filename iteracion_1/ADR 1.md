@@ -74,4 +74,14 @@ Los servicios del sistema se encuentran conectados a la misma base de datos, par
 
 ![image.png](images/image%202.png)
 
+## Consecuencias
+
+Los beneficios de elegir una arquitectura basada en microservicios son amplios y se ha hablado mucho de ellos a lo largo de éste documento. A su vez, la distribución de responsabilidades escogida en la cuál cada microservicio se encarga de mantener su propia persistencia asegura una buena modularidad y a partir de ello una buena mantenibilidad a futuro. Las funciones principales del sistema se dividieron en servicios de forma desacoplada que interactuan para llevar a cabo sus responsabilidades. Esto nos provee una mayor interoperabilidad del sistema ya que cada uno de los componentes se comunica entre sí y con los servicios externos que sean necesarios. Además, se provee mayor flexibilidad en distintos aspectos como la elección de tecnologías específicas, patrones, frameworks, e infraestructura de cada servicio lo que facilita el deployment y la migración al protocolo HTTP facilita el acceso desde clientes web o móbiles.
+
+De todos modos, algunos desafíos surgen de las decisiones tomadas:
+- **Performance:** el uso de microservicios que se deben comunicar vía redes puede generar más overhead y demoras que en una aplicación monolítica no sucedería.
+- **Alta flexibilidad:** la alta flexibilidad puede ser una ventaja en ciertos aspectos, pero por otro lado nos pone el desafío de trabajar con un marco de referencia adecuado para las futuras decisiones que tomen los equipos de desarrollo individuales.
+- **Conocimiento técnico:** también será necesario que cada equipo pueda contar con miembros con alto conocimiento técnico de las distintas tecnologías y del desarrollo de microservicios.
+- **Trabajo con múltiples bases:** si bien es cierto que para desacoplar los servicios se decidió que cada uno tuviera su propia base de datos, esto puede traer consecuencias negativas en la performance de la comunicación al tener que estar haciendo muchas solicitudes por transacción del sistema a una memoria secundaria, y además mantener la consistencia lógica entre sí, ya que la información que almacenan está relacionada por la lógica del negocio. 
+
 
