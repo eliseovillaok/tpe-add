@@ -46,6 +46,30 @@ La decisión asume que la empresa tiene un buen entendimiento del Patrón de Arq
 
 ![image.png](images/image.png)
 
+*Descripción:*
 
+Los módulos principales del sistema son:
+
+- *Clientes:* microservicio encargado de la gestión de los datos de los clientes, junto con el sistema de pago de los pedidos. Posee su propia base de datos relacional donde se almacena dicha información.
+- *Pedidos:* microservicio encargado de la gestión y almacenamiento de los pedidos realizados. Cuando se realiza un pedido, el modulo de pedidos se lo informa al modulo de clientes, solicitando la información necesaria del cliente para la autenticación y el almacenamiento del pedido en su base de datos.
+- *Repartos y rutas:* microservicio encargado de intercambiar información con el modulo de Pedidos para gestionar los repartos de los mismos. Almacenando los datos de los repartidores y asignándoles los pedidos que les correspondan.
+
+## *Alternativas rechazadas*
+
+*Repartos y rutas acoplado con Pedidos*
+
+Los servicios de “Repartos y rutas” y “Pedidos” se encuentran conectados a la misma base de datos para poder acceder a los pedidos y mantener la consistencia de los repartos de manera mas simple.
+
+Ésta alternativa *fue rechazada* porque no cumple con el criterio de no acoplamiento en microservicios, ya que ambos se encuentran acoplados por la misma base de datos, por lo tanto una falla de uno puede producir una falla en el otro.
+
+![image.png](images/image%201.png)
+
+*Servicios con BD Compartida*
+
+Los servicios del sistema se encuentran conectados a la misma base de datos, para aumentar la performance evitando agregaciones o ensamblados de distintas bases de datos.
+
+Ésta alternativa *fue rechazada* porque introduce acoplamiento entre servicios ademas de un overhead en la base de datos que puede producir fallos al aumentar la cantidad de solicitudes por unidad de tiempo
+
+![image.png](images/image%202.png)
 
 
