@@ -44,6 +44,8 @@ La decisión asume que la empresa tiene un buen entendimiento del Patrón de Arq
 
 **Diagrama de la estructura de microservicios:**
 
+Este diagrama representa la vista de componentes de la arquitectura basada en microservicios. Los módulos principales (Clientes, Pedidos, y Repartos) están diseñados para operar de manera independiente, comunicándose a través de servicios REST. La modularidad de la arquitectura permite escalabilidad horizontal, mientras que cada microservicio mantiene su propia base de datos para garantizar independencia y encapsulación.
+
 ![image.png](images/image.png)
 
 *Descripción:*
