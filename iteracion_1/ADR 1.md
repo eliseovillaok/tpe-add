@@ -64,7 +64,7 @@ Los servicios de “Repartos y rutas” y “Pedidos” se encuentran conectados
 
 Ésta alternativa *fue rechazada* porque no cumple con el criterio de no acoplamiento en microservicios, ya que ambos se encuentran acoplados por la misma base de datos, por lo tanto una falla de uno puede producir una falla en el otro.
 
-![image.png](images/image%201.png)
+![image4.jpg](images/image4.jpg)
 
 *Servicios con BD Compartida*
 
@@ -72,7 +72,7 @@ Los servicios del sistema se encuentran conectados a la misma base de datos, par
 
 Ésta alternativa *fue rechazada* porque introduce acoplamiento entre servicios ademas de un overhead en la base de datos que puede producir fallos al aumentar la cantidad de solicitudes por unidad de tiempo
 
-![image.png](images/image%202.png)
+![image5.jpg](images/image5.jpg)
 
 ## Consecuencias
 
