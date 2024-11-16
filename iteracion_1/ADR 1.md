@@ -35,4 +35,17 @@ La decisión asume que la empresa tiene un buen entendimiento del Patrón de Arq
 - **Libertad de desarrollo:** Cada microservicio puede desarrollarse con una tecnología o herramienta específica, sin necesidad de que las otras partes también las tengan que utilizar.
 - **Consistencia:** cuando un software está dividido en muchas partes pequeñas, su consistencia y resistencia a los errores aumenta notablemente, al contrario de lo que ocurre en una arquitectura monolítica.
 
+**Desventajas de utilizar microservicios:**
+
+- **Alto consumo de memoria:** al tener cada microservicio sus propios recursos y bases de datos, consumen más memoria y CPU.
+- **Complejidad en la gestión:** si contamos con un gran número de microservicios, será más complicado controlar la gestión e integración de los mismos.
+- **Dificultad en la realización de pruebas:** debido a que los componentes de la aplicación están distribuidos, las pruebas y test globales son más complicados de realizar.
+- **Coste de implantación alto:** una arquitectura de microservicios puede suponer un alto coste de implantación debido a costes de infraestructura y pruebas distribuidas.
+
+**Diagrama de la estructura de microservicios:**
+
+![image.png](images/image.png)
+
+
+
 
