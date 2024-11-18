@@ -78,6 +78,9 @@ Para desacoplar las etapas y que aumentar la escalabilidad, decidimos que cada m
     - Procesa la aceptación del pedido y, una vez completada la fase, publica un mensaje `PedidoAceptado` en el tópico `aceptacion-pedidos`.
 5. **Notificación Final y Persistencia**:
     - El modulo de pago estará suscrito al tópico `aceptacion-pedidos` para concretar el pago de los pedidos que ya pasaron por las tres etapas.
+
+Cada etapa actúa como **consumidor** del tópico anterior y **productor** del tópico siguiente, asegurando un flujo ordenado y desacoplado.  
+
 ### **Balanceador de Carga**
 
 Entre el API Gateway y el módulo Pedidos se decidió incorporar un balanceador de carga que pueda distribuir mejor las transacciones solicitadas a través del sistema. Esto incide en la funcionalidad que se quiere atacar en la presente iteración ya que el API Gateway es el módulo que autentica a un consumidor antes de que éste pueda realizar un pedido en el módulo Pedidos.
@@ -128,4 +131,4 @@ La ventaja principal de esta variante es que el cliente no necesita desarrollar 
 Esta alternativa se rechazó, eligiendo la implementación seleccionada de Event Broker con Kafka, que nos provee la comunicación independiente entre microservicios de forma más simple. Agregar el Service Discovery sería incorporar otra forma de que los servicios se comuniquen entre sí de manera innecesaria. 
 
 De esta forma, el balanceador de carga no presentaría otro patrón para la comunicar los microservicios entre sí.
-Cada etapa actúa como **consumidor** del tópico anterior y **productor** del tópico siguiente, asegurando un flujo ordenado y desacoplado.
+
