@@ -144,3 +144,13 @@ Esta alternativa se rechazó, eligiendo la implementación seleccionada de Event
 
 De esta forma, el balanceador de carga no presentaría otro patrón para la comunicar los microservicios entre sí.
 
+## **Consecuencias**
+
+Las decisiones descriptas anteriormente atacan la escalabilidad de la funcionalidad de Pedidos de varias maneras. Primero se agura que al usar el patrón de cadena de responsabilidades la comunicación entre los servicios no sea un limitante en el procesamiento de las transacciones y luego se toma un balanceador de carga para poder distribuir esas transacciones a través del sistema. Si bien existen los trade off de atacar con tácticas el atributo de calidad, creemos que se logra un balance positivo con las decisiones tomadas, por que su impacto negativo en los demás atributos no es tan grande cómo el beneficio que traen para la escalabilidad del sistema en una función semi crítica. 
+
+Los desafíos a tener en cuenta tiene que ver con los trade off que relacionan los distintos atributos de calidad:
+
+- Disponibilidad: tanto para el balanceador de carga, cómo para la cadena de responsabilidades, será importante que que se pueda recuperar ante cualquier error de conexión para no perder solicitudes y transacciones en el tránsito del sistema.
+- Testeabilidad: la complejidad del diseño puede inducir a que las pruebas de rendimientos se hagan cada vez más complejas, sobre todo aquellas que prueban la integración de los módulos.
+- Desplegabilidad: a su vez, el incremento de la complejidad en el sistema impactará la facilidad del mismo en ser desplegado, lo cuál requerirá que todos los módulos, no sólo puedan ser probados de forma individual e integrada, si no que sean gestionados de forma correcta.
+- Rendimiento: se deberá tener en cuenta que tanto el balanceador de carga cómo la cadena de responsabilidades no impacten negativamente en el rendimiento de los módulos, tanto en el uso de procesador cómo de memoria, por demás del impacto beneficioso que tiene en la eficiencia de la comunicación
