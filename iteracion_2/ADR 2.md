@@ -1,52 +1,64 @@
-# **Iteración 2**
-
 ## **ADR 002**
 
 ### **Titulo**
 
-Autenticación y Modulo de Pagos para el Cliente
+Autenticación, redirección y aislación de pagos.
 
 **Motivación**
 
 Dado que la seguridad de los datos de los clientes y la integridad de las transacciones de pagos son aspectos críticos, es esencial que el diseño arquitectónico priorice estos atributos de calidad. Implementar patrones para la autenticación y autorización garantizará un control de acceso seguro y confiable, protegiendo los datos personales. 
 
-Asimismo, la integración de un microservicio de pagos con la pasarela de Mercado Pago proporcionará un entorno de transacciones seguro, fortaleciendo la confianza del cliente y mejorando la reputación de la empresa. 
+Asimismo, la integración de un microservicio de pagos con la pasarela de MercadoLibre proporcionará un entorno de transacciones seguro, fortaleciendo la confianza del cliente y mejorando la reputación de la empresa. 
 
 **Drivers elegidos:** Garantizar la seguridad de los datos del cliente.
 
-**Justificación:** Este driver ha sido seleccionado debido a la criticidad de los módulos de 'Clientes' y 'Pagos', que contienen información altamente sensible y deben cumplir con estándares de seguridad estrictos para prevenir accesos no autorizados, brechas de datos y fraudes.
+**Justificación:** Este driver ha sido seleccionado debido a la criticidad del modulo 'Pedidos' y ‘Clientes’, que contienen información altamente sensible y deben cumplir con estándares de seguridad estrictos para prevenir accesos no autorizados, brechas de datos y fraudes.
 
 **Meta:** Diseñar una arquitectura de microservicios que optimice la seguridad de los datos personales de los clientes y las transacciones de pagos, garantizando un acceso controlado, autenticado y autorizado.
 
-**Componente a refinar**: Módulo de Clientes y Autenticación
+**Componente a refinar**: Módulo de Clientes y Pedidos
 
-## **Decisión principal para Autenticación**
+## **Decisión principal**
 
-Centralizar la autenticación en un ***API Gateway.*** Los clientes deben autenticarse una sola vez y recibir un token JWT que se adjunta a sus solicitudes. Cada microservicio (como el de "Pedidos") simplemente valida el token, garantizando que la solicitud proviene de un cliente autenticado sin necesidad de realizar la autenticación completa nuevamente. Esto permite que los microservicios sean ligeros, seguros y más fáciles de mantener.
+Para gestionar la autenticación y autorización de forma centralizada y eficiente, se opta por implementar un modulo **API Gateway** que interceptará todas las solicitudes de los usuarios y delegará las peticiones a los microservicios correspondientes después de validarlas.  Y también se decidió crear un modulo **Pago** que actúa de adaptador (y aislador) con la pasarela externa.
 
-La autenticación y validación del token se hacen en el gateway antes de que la solicitud llegue a los microservicios backend. El gateway se convierte en el responsable de la seguridad y redirige las solicitudes a los microservicios adecuados después de verificar el token.
+**Flujo de pedidos**
 
-**Flujo**
+1. **Autenticación centralizada**:
+    - Cuando el usuario intenta realizar un pedido, su solicitud pasa primero por el **API Gateway**.
+    - El **API Gateway** valida la autenticación del usuario. Para esto, se conecta con el **microservicio de Clientes** para verificar los datos de autenticación del usuario (por ejemplo, correo electrónico y contraseña).
+    - Si la autenticación es exitosa, el **API Gateway** emite un **token de acceso** que el usuario adjuntará a las futuras solicitudes (en la cabecera `Authorization`) que incluye:
+        - Información del usuario (por ejemplo, ID de usuario, nombre).
+        - Roles y permisos del usuario.
+        - Tiempo de expiración del token.
+        - Una firma digital para garantizar la integridad del token.
+2. **Redirección a microservicios**:
+    - Una vez autenticado el usuario, el **API Gateway** redirige la solicitud hacia el microservicio de **Pedidos**.
+    - El microservicio de **Pedidos** se encarga de gestionar los productos que el usuario desea comprar y preparar la orden.
+3. **Integración con Pasarela de Pagos**:
+    - Al confirmar el pedido, el microservicio de **Pedidos** se conecta con el microservicio de **Pagos**, que actúa como un adaptador hacia una pasarela externa de pagos (como **MercadoLibre**).
+    - El pago es procesado por la pasarela de pagos, y si la transacción es exitosa, el pedido se completa.
+4. **Almacenamiento de Pedido y Envío de Factura**:
+    - El microservicio de **Pedidos** almacena la información del pedido en la **base de datos de Pedidos**.
+    - Luego, envía una factura de pago al **microservicio de Clientes**, que se encarga de adjuntar la factura al registro del cliente correspondiente en la **base de datos de Clientes**.
 
-- El cliente (usuario) accede a la aplicación web o móvil y realiza un inicio de sesión proporcionando sus credenciales (usuario y contraseña).
-- La aplicación envía las credenciales al **servidor de autenticación** central (por ejemplo, un servidor de OAuth 2.0 o un servicio de autenticación implementado en el backend).
-- El servidor de autenticación verifica las credenciales del cliente contra su base de datos de usuarios.
-- Si las credenciales son correctas, el servidor emite un **token de acceso** (por ejemplo, un JWT) que incluye:
-    - Información del usuario (por ejemplo, ID de usuario, nombre).
-    - Roles y permisos del usuario.
-    - Tiempo de expiración del token.
-    - Una firma digital para garantizar la integridad del token.
-- El servidor de autenticación envía este token de vuelta al cliente.
-- A partir de este punto, el cliente incluye el token de acceso en la cabecera `Authorization` de cada solicitud HTTP que realiza a los microservicios.
-- Cuando un microservicio, como el de **"Pedidos"**, recibe una solicitud con un token en la cabecera, utiliza una biblioteca o middleware para validar dicho token.
-- Si el token es válido, el microservicio permite que la solicitud continúe y ejecuta la lógica de negocio (por ejemplo, procesar un pedido).
+**Flujo de acceso a datos de clientes**
+
+1. **Autenticación centralizada**:
+    - Cuando el administrador intenta acceder a datos de los clientes, su solicitud pasa primero por el **API Gateway**.
+    - Luego al validar la autenticación del administrador, se retorna un **token de acceso**
+2. **Redirección a microservicios**:
+    - Una vez autenticado el administrador, el **API Gateway** redirige la solicitud hacia el microservicio de **Clientes**.
+    - El microservicio de **Clientes** se encarga de gestionar y obtener los datos de los clientes.
+
+![image.jpg](images/image.jpg)
 
 **Ventajas de utilizar API Gateway:**
 
 - **Reducción de Complejidad:** Asegura que todos los microservicios reciban solicitudes ya autenticadas, sin tener que implementar lógica de autenticación propia en cada uno.
 - **Seguridad Uniforme**: Todos los microservicios pueden confiar en que el cliente ya ha sido autenticado y solo necesitan validar el token. Esto reduce la superficie de ataque y asegura que las políticas de autenticación se gestionen de forma centralizada.
 - **Modificabilidad:** Si se agregan nuevos microservicios al sistema, la lógica de validación ya estaría implementada y sólo se debería diseñar el sistema de validación de tokens en en dicho microservicio.
-- **Escalabilidad**: La validación de tokens en cada microservicio es mucho más ligera y rápida que la autenticación completa, lo que ayuda a mantener la eficiencia. Además la API Gateway puede utilizarse en un futuro como balanceador de carga.
+- **Escalabilidad**: La validación de tokens en cada microservicio es mucho más ligera y rápida que la autenticación completa, lo que ayuda a mantener la eficiencia. Además la API Gateway puede (en un futuro) enviar las solicitudes a un balanceador de carga.
 
 **Desventajas potenciales de la API Gateway:**
 
@@ -61,13 +73,7 @@ Cada microservicio es responsable de su propia autenticación y validación de t
 
 **Ventajas:** No hay un solo punto de control, lo que puede aumentar la flexibilidad y escalabilidad.
 
-**Desventajas:** Si el sistema crece y más microservicios se agregan, la administración de tokens se vuelve más compleja, ya que todos los microservicios deben estar alineados en cuanto a las políticas de autenticación y autorización.
-
-- **Problemas de Sincronización:** Si no se maneja correctamente la **sincronización** de las claves públicas/privadas para la validación de los tokens, o si hay diferentes configuraciones entre microservicios, puede haber problemas de **inconsistencia** en la validación de tokens, lo que podría generar errores de autenticación.
-    
-    Por ejemplo, si un microservicio no está actualizado con las últimas claves para validar los tokens, puede rechazar solicitudes válidas o permitir solicitudes no autenticadas.
-    
-- **Repetición de Lógica de Autenticación:** La lógica de autenticación y validación de tokens (como la verificación de la firma del JWT, la comprobación de la expiración del token, y la verificación de los permisos o roles) debe ser implementada en cada microservicio que necesita autenticar usuarios. Esto **duplica** esfuerzos y puede llevar a la creación de código redundante en cada microservicio.
+**Desventajas:** Si el sistema crece y más microservicios se agregan, la administración de tokens se vuelve más compleja, ya que todos los microservicios deben estar alineados en cuanto a las políticas de autenticación y autorización. Duplicaría esfuerzos y generaría repetición de código y redundancia entre servicios
 
 En conclusión si bien la centralización de la autenticación en una API Gateway trae problemas de flexibilidad, los mecanismos descentralizados son más complejos de mantener y duplican lógica. Por lo tanto esta opción quedó descartada y continuamos evaluando opciones de autenticación centralizada.
 
