@@ -53,6 +53,13 @@ Para gestionar la autenticación y autorización de forma centralizada y eficien
 
 ![image.jpg](images/image.jpg)
 
+| Microservicio | Responsabilidad |
+| --- | --- |
+| API Gateway | La API gateway valida el perfil de los usuarios y permite al usuario acceder al servicio de Pedidos |
+| Pedidos | Se encarga de administrar los productos seleccionados por el usuario para la compra y de organizar la preparación de la orden. |
+| Clientes | Gestiona la información de los clientes y se encarga de responder a la API Gateway para realizar la validación del usuario asociado a un cliente. |
+| Pagos | Funciona como un intermediario que conecta y facilita la integración con una pasarela externa de pagos. |
+
 **Ventajas de utilizar API Gateway:**
 
 - **Reducción de Complejidad:** Asegura que todos los microservicios reciban solicitudes ya autenticadas, sin tener que implementar lógica de autenticación propia en cada uno.
