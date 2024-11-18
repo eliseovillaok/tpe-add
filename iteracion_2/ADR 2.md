@@ -106,3 +106,14 @@ Este enfoque utiliza un servicio externo para gestionar la autenticación y auto
 - **Riesgos de Seguridad:** La **seguridad del IdP** es crucial. Si el IdP se ve comprometido, todos los microservicios y usuarios que dependen de él podrían estar en riesgo.
 
 En conclusión, este mecanismo nos provee las mismas ventajas que un API Gateway pero agregándole desventajas como la dependencia de un proveedor externo. Por lo tanto, también se descartó.
+
+## Consecuencias
+
+Al tener un pequeño desarrollo utilizar la pasarela de pagos (payment gateway) de MercadoLibre nos libera de tener que desarrollar una gran funcionalidad y mantener muchos atributos de calidad muy prioritarios (seguridad). En el marco de las limitaciones del trabajo que estamos desarrollando es una decisión que a las luces de las metas puestas para esta iteración encaja y cumple los objetivos deseados. También es necesario recalcar que el trabajo de microservicios permite que aunque uno de los servicios esté atareado y con baja responsibidad, en un caso de alta carga, el resto pueda mantenerse operativo, facilitando la disponibilidad. 
+
+En el futuro, el API gateway puede funcionar para autenticar los roles a desarrollar más adelante, cómo los administradores y los encargados del reparto, asignando a su vez los permisos especificos para el acceso a la información pertinente. Ésto deberá dejarse abierto para poder implementar en cada uno de los microservicios que actúan en las historias de usuario a incorporar en las próximas iteraciones.
+
+Desafíos:
+- Al confiar en la pasarela de MercadoLibre se deja al sistema en desarrollo atado a las vulnerabilidades en términos de seguridad que tenga el propio sistema. La comunicación a través de la red es muy explotable por algunos hackers con experiencia que pueden atacar el tránsito de los datos y exponer información sensible. Esto se puede monitorear a través del testeo regular de la API y la securización de las claves y los tokes.
+- La escalabilidad y la mantenibilidad del sistema puede ser un desafío futuro teniendo un gateway de autorización ya que dependiendo de ese servicio se van a poder llevar a cabo las operaciones de compra de la compañía
+- El desarrollo del gateway debe tener en cuenta la disponibilidad para que ante cualquier falla poder volver a levantarse y no responder con un error fatal
