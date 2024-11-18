@@ -102,6 +102,18 @@ Para llevar a cabo esta implementación se deberá:
 - Único punto de fallo. Si el balanceador falla, toda la interacción del cliente con el sistema quedaría inactiva.
 - Para poder mantener la consistencia del sistema en todo momento, para lo cuál va a hacer falta que la actualización del balanceador, cuándo se agrega o elimina un servicio sea instantánea.
 
+![image.jpg](images/image.jpg)
+
+| Microservicio | Responsabilidad |
+| --- | --- |
+| API Gateway | La API gateway valida el perfil de los usuarios y permite al usuario acceder al servicio de Pedidos |
+| Pedidos | Se encarga de administrar los productos seleccionados por el usuario para la compra y de organizar la preparación de la orden. |
+| Clientes | Gestiona la información de los clientes y se encarga de responder a la API Gateway para realizar la validación del usuario asociado a un cliente. |
+| Pagos | Funciona como un intermediario que conecta y facilita la integración con una pasarela externa de pagos al recibir el mensaje PedidoAceptado para realizar la operación de pago. |
+| PedidoPreprocesado | Recibe el pedido del sistema principal, valida los datos del pedido y publica un mensaje PedidoPreprocesado en el tópico preprocesado-pedidos. |
+| PedidoAutorizado | Consume el mensaje PedidoPreprocesado, verifica la identidad del cliente y los intentos permitidos. Si la autorización es exitosa, publica un mensaje PedidoAutorizado en el tópico autorizacion-pedidos. |
+| PedidoAceptado | Consume el mensaje PedidoAutorizado, procesa la aceptación del pedido y, al finalizar, publica un mensaje PedidoAceptado en el tópico aceptacion-pedidos. |
+
 ## ***Alternativas rechazadas***
 
 ### **Patrón de CQRS (Command Query Responsibility Segregation)**
