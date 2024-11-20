@@ -1,7 +1,6 @@
-## **ADR 004**
+# **ADR 004**
 
-
-### **Titulo**
+## **Titulo**
 
 Optimización de arquitectura para el modulo de **Reparto y Pedidos**
 
