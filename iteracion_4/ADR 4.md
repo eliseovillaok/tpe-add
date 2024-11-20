@@ -1,14 +1,13 @@
-# **Iteración 4**
-
 ## **ADR 004**
+
 
 ### **Titulo**
 
-Arquitectura Optimizada para la Gestión de Reparto de Pedidos y Rutas
+Optimización de arquitectura para el modulo de **Reparto y Pedidos**
 
 **Motivación**
 
-El módulo de gestión de reparto de pedidos y rutas es un componente crítico, ya que maneja la asignación de rutas y la optimización de la entrega de pedidos. La arquitectura debe ser lo suficientemente flexible y eficiente para soportar algoritmos de optimización en tiempo real, gestionar la flota de transporte y asegurar que los repartos se realicen de manera oportuna y sin problemas. Además, la capacidad de responder rápidamente a incidencias en las rutas es fundamental.
+El módulo de gestión de reparto de pedidos y rutas es un componente crítico, ya que maneja la asignación de rutas y la optimización de la entrega de pedidos. La arquitectura debe ser lo suficientemente flexible y eficiente para soportar algoritmos de optimización en tiempo real, gestionar la flota de transporte y asegurar que los repartos se realicen de manera oportuna y sin problemas. Además, la capacidad de reportar y responder rápidamente a los incidentes en las rutas es fundamental.
 
 **Drivers elegidos:** 
 
@@ -22,24 +21,51 @@ El módulo de gestión de reparto de pedidos y rutas es un componente crítico, 
 **Atributos de Calidad:**
 
 - **Escalabilidad**: Necesidad de procesar grandes volúmenes de rutas y repartos simultáneamente.
-- **Desempeño**: Minimizar tiempos de respuesta para garantizar que los algoritmos de optimización y la asignación de rutas sean eficientes.
-- **Resiliencia**: Continuar las operaciones de reparto y rutas incluso en caso de fallos parciales.
-- **Desacoplamiento**: Los diferentes componentes deben operar de forma independiente para facilitar el mantenimiento y la escalabilidad.
+- **Performance**: Minimizar tiempos de respuesta para garantizar que los algoritmos de optimización y la asignación de rutas sean eficientes.
+- **Disponibilidad**: Continuar las operaciones de reparto y rutas incluso en caso de fallos parciales.
+- **Modificabilidad**: Los diferentes componentes deben operar de forma independiente para facilitar el mantenimiento y la escalabilidad.
+
 
 **Justificación:** 
 
-La elección de estos drivers se basa en la naturaleza crítica del módulo de **Gestión de Reparto y Rutas**, que tiene un impacto directo en la eficiencia de la entrega y en la experiencia del cliente. Las **user stories** seleccionadas reflejan la necesidad de un sistema que soporte operaciones en tiempo real y gestione las complejidades de las rutas de reparto, priorizando la optimización y la capacidad de respuesta. Y los **atributos de calidad** se eligieron debido a que:
+La elección de estos drivers se basa en la criticidad del módulo de **Gestión de Reparto y Rutas**, que tiene un impacto directo en la entrega y en la experiencia del cliente. Las **user stories** seleccionadas reflejan la necesidad de un sistema que soporte operaciones en tiempo real y gestione las complejidades de las rutas de reparto, priorizando la optimización y la capacidad de respuesta. Y los **atributos de calidad** se eligieron debido a que la velocidad de respuesta, la disponibilidad y la capacidad de modificar el sistema son escenciales para asegurar la confiabilidad para con el usuario y la eficacia del servicio.
 
-- **Escalabilidad**: Es esencial para soportar picos de actividad, como un gran número de repartos en horarios de alta demanda.
-- **Desempeño**: Se necesita un tiempo de respuesta bajo para que los algoritmos de optimización puedan funcionar eficazmente y proporcionar decisiones en tiempo real.
-- **Resiliencia**: La continuidad del servicio es crítica, incluso ante fallos parciales o incidentes en la red de rutas, para evitar interrupciones en la cadena de suministro.
-- **Desacoplamiento**: Permite un mantenimiento más sencillo y la capacidad de escalar y actualizar partes del sistema sin afectar el funcionamiento general.
+**Meta:** Asegurar un sistema de gestión de reparto de pedidos y rutas que optimice las entregas, maneje eficazmente los cambios en tiempo real y pueda responder rápidamente a incidencias.
 
-**Meta:** Asegurar un sistema de gestión de reparto de pedidos y rutas que optimice las entregas, maneje eficazmente los cambios en tiempo real y pueda responder rápidamente a incidencias, mejorando la experiencia del cliente y la eficiencia operativa.
+**Componente a refinar**: El módulo de **Gestión de Reparto y Rutas** y su integración con los módulos de **Estadísticas** e **Incidencias.**
 
-**Componente a refinar**: El módulo de **Gestión de Reparto y Rutas** y su integración con los módulos de **Estadísticas** e **Incidencias** para garantizar la eficiencia y la resiliencia del sistema.
 
 ## Alternativas
+
+- Arquitectura de Microservicios con Orquestación Centralizada
+- **Arquitectura de Microservicios con Coreografía Basada en Eventos**
+- Arquitectura Basada en Colas de Mensajes (Kafka, RabbitMQ)
+- Arquitectura Hexagonal para la Gestión de Algoritmos de Optimización
+- Uso de Data Streaming y Procesamiento en Tiempo Real
+
+## Alternativa elegida
+
+### **Arquitectura de Microservicios con Coreografía Basada en Eventos**
+
+- **Aplicación**: Los módulos operan de forma autónoma, comunicándose mediante eventos publicados y suscritos en una infraestructura de mensajería (por ejemplo, Kafka). No hay orquestador central; **cada módulo decide cómo actuar al recibir ciertos eventos.**
+- **Reparto y Rutas**: Publica eventos cuando se asignan rutas o se actualizan las condiciones de los camiones. Escucha eventos de otros módulos para adaptar las rutas en tiempo real.
+- **Estadísticas**: Se suscribe a eventos generados por **Reparto y Rutas** e **Incidencias** para procesar y mostrar datos en tiempo real.
+- **Incidencias**: Publica eventos cuando se detectan problemas y escucha respuestas de los otros módulos que pueden influir en la ruta y el reparto.
+- **Ventajas**:
+    - **Desacoplamiento**: Cada microservicio es autónomo, lo que facilita el mantenimiento y la escalabilidad.
+    - **Resiliencia**: La falla de un microservicio no afecta directamente a los otros, promoviendo la alta disponibilidad.
+    - **Escalabilidad**: Permite escalar servicios de forma independiente según las necesidades.
+- **Desventajas**:
+    - **Complejidad en el Rastreo**: Puede ser difícil entender y mantener el flujo de trabajo al distribuir la lógica.
+    - **Consistencia Eventual**: La sincronización entre servicios puede ser compleja, y no siempre hay una consistencia inmediata.
+    - **Mayor Sobrecarga Operativa**: Requiere un manejo cuidadoso de la comunicación por eventos para evitar ciclos o problemas de orquestación implícita.
+
+![image](images/image2.jpg)
+---
+![image](images/image5.jpg)
+
+
+## Alternativas rechazadas
 
 ### **Arquitectura de Microservicios con Orquestación Centralizada**
 
@@ -56,20 +82,9 @@ La elección de estos drivers se basa en la naturaleza crítica del módulo de *
     - **Escalabilidad Limitada**: Puede convertirse en un cuello de botella si no se diseña con escalabilidad en mente.
     - **Dependencia del Orquestador**: Introduce un punto de dependencia adicional en la arquitectura.
 
-### **Arquitectura de Microservicios con Coreografía Basada en Eventos**
+![image](images/image1.jpg)
 
-- **Aplicación**: Los módulos operan de forma autónoma, comunicándose mediante eventos publicados y suscritos en una infraestructura de mensajería (por ejemplo, Kafka). No hay orquestador central; cada módulo decide cómo actuar al recibir ciertos eventos.
-- **Reparto y Rutas**: Publica eventos cuando se asignan rutas o se actualizan las condiciones de los camiones. Escucha eventos de otros módulos para adaptar las rutas en tiempo real.
-- **Estadísticas**: Se suscribe a eventos generados por **Reparto y Rutas** e **Incidencias** para procesar y mostrar datos en tiempo real.
-- **Incidencias**: Publica eventos cuando se detectan problemas y escucha respuestas de los otros módulos que pueden influir en la ruta y el reparto.
-- **Ventajas**:
-    - **Desacoplamiento**: Cada microservicio es autónomo, lo que facilita el mantenimiento y la escalabilidad.
-    - **Resiliencia**: La falla de un microservicio no afecta directamente a los otros, promoviendo la alta disponibilidad.
-    - **Escalabilidad**: Permite escalar servicios de forma independiente según las necesidades.
-- **Desventajas**:
-    - **Complejidad en el Rastreo**: Puede ser difícil entender y mantener el flujo de trabajo al distribuir la lógica.
-    - **Consistencia Eventual**: La sincronización entre servicios puede ser compleja, y no siempre hay una consistencia inmediata.
-    - **Mayor Sobrecarga Operativa**: Requiere un manejo cuidadoso de la comunicación por eventos para evitar ciclos o problemas de orquestación implícita.
+Rechazada porque la desventaja de tener un punto de falla único limita mucho la escalabilidad del sistema.
 
 ### **Arquitectura Basada en Colas de Mensajes (Kafka, RabbitMQ)**
 
@@ -86,6 +101,10 @@ La elección de estos drivers se basa en la naturaleza crítica del módulo de *
     - **Consistencia y Orden**: Gestionar la consistencia de datos y el orden de procesamiento puede ser un desafío en flujos complejos.
     - **Sobrecarga de Infraestructura**: Requiere infraestructura adicional para gestionar las colas y los mensajes.
 
+![image](images/image3.jpg)
+
+Rechazada porque genera mucha sobrecarga de la infraestructura.
+
 ### **Arquitectura Hexagonal para la Gestión de Algoritmos de Optimización**
 
 - **Aplicación**: Los algoritmos de optimización y la lógica de gestión de rutas se encapsulan en microservicios con una arquitectura hexagonal. Esto permite que cada microservicio se comunique a través de adaptadores, facilitando la interacción con otros módulos y servicios externos.
@@ -100,6 +119,10 @@ La elección de estos drivers se basa en la naturaleza crítica del módulo de *
     - **Complejidad Inicial**: Implementar una arquitectura hexagonal puede requerir un esfuerzo inicial significativo.
     - **Comunicación**: Necesita adaptadores bien diseñados para facilitar la comunicación entre los microservicios.
     - **Capacitación**: Es posible que el equipo necesite capacitación adicional para aprovechar al máximo esta arquitectura.
+ 
+![image](images/image4.jpg)
+
+Rechazada porque aplica una complejidad innecesaria a lo que el driver apunta.
 
 ### **Uso de Data Streaming y Procesamiento en Tiempo Real**
 
@@ -115,3 +138,5 @@ La elección de estos drivers se basa en la naturaleza crítica del módulo de *
     - **Complejidad Técnica**: La configuración y mantenimiento de un sistema de streaming en tiempo real pueden ser complejos y requerir habilidades especializadas.
     - **Consistencia Eventual**: La consistencia inmediata puede ser difícil de garantizar en algunos casos de uso.
     - **Sobrecarga de Procesamiento**: El procesamiento en tiempo real puede requerir recursos significativos y un monitoreo constante para garantizar el rendimiento óptimo.
+
+Rechazada porque genera mucha sobrecarga de la infraestructura.
