@@ -1,6 +1,6 @@
-## **ADR 002**
+# **ADR 002**
 
-### **Titulo**
+## **Titulo**
 
 Autenticación, redirección y aislación de pagos.
 
