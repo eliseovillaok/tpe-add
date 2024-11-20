@@ -66,6 +66,9 @@ poder ejecutar los microservicios.
 - Como **repartidor de pedidos** quiero ingresar las incidencias de cada reparto **para** que se seolucionen rapidamente
 - Como **repartidor de pedidos** quiero acceder a algoritmos de optimizacon de rutas **par﻿a** entregar los pedidos con mas rapidez
 
+### User Story Mapping (USM)
+![USM](pre-iteracion-1/user-story-mapping.jpg)
+
 ### Restricciones
 
 - Si un cliente intenta realizar un pedido se le permite un número máximo de 3 intentos.
