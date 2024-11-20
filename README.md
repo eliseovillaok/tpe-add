@@ -128,3 +128,8 @@ poder ejecutar los microservicios.
     | Ambiente | Sistemas conocidos antes del runtime |
     | Respuesta | Si el pago es autorizado, el sistema valida la compra del cliente, sino, informa pago inválido y ofrece reintentarlo. |
     | Medida de la respuesta | 100% solicitudes intercambiadas correctamente |
+
+
+### Resultado final del diseño
+
+![image](iteracion_4/images/image5.jpg)
