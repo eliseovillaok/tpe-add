@@ -1,5 +1,3 @@
-# **Iteración 3**
-
 ## **ADR 003**
 
 ### **Titulo**
