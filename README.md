@@ -4,7 +4,7 @@
 
 
 Una **compañía de productos alimenticios** pretende **migrar su sistema** existente, que posee una
-arquitectura de naturaleza **monolítica**, hacia una arquitectura basada en microservicios, de
+arquitectura de naturaleza **monolítica**, hacia una [arquitectura basada en microservicios](#resultado-final-del-diseño), de
 manera que la nueva arquitectura sea menos rígida y sea más fácil de evolucionar.
 La arquitectura existente cuenta con una **parte de clientes PC y móvil** que acceden a los datos
 de la empresa alojados en **2 Bases de datos SQL (Clientes, Pedidos)**. La base de Clientes
