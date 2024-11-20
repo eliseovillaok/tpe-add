@@ -139,3 +139,16 @@ Rechazada porque aplica una complejidad innecesaria a lo que el driver apunta.
     - **Sobrecarga de Procesamiento**: El procesamiento en tiempo real puede requerir recursos significativos y un monitoreo constante para garantizar el rendimiento óptimo.
 
 Rechazada porque genera mucha sobrecarga de la infraestructura.
+
+## Consecuencias
+
+En esta iteración se seleccionó como driver a atacar la funcionalidad de repartos con sus respectivos atributos de calidad además de los requisitos funcionales. La decisión tomada, a la vez que algunas alternativas, señalaron que el módulo a refinar debía desacoplarse en microservicios independientes para poder mejorar la mantenibilidad, la disponibilidad y la escalabilidad. Al mimo tiempo, parte de las funcionalidades seleccionadas implican trabajo en tiempo real, por lo que la optimización de esos procesos es clave cómo parte del diseño de la arquitectura. La disponibilidad es mejorada al tener una separación y un desacoplamiento de los servicios que les permite actuar y responder de manera ordenada sin depender de más de los otros servicios alrededor.
+
+Los desafíos que quedan para el sistema y el equipo  de desarrollo que lo lleva adelante son:
+
+- Complejidad: La arquitectura basada en eventos puede complicar la comprensión general del sistema, dificultando el rastreo de la lógica de negocio.
+- Consistencia de Datos: Mantener la consistencia eventual entre servicios puede crear problemas, especialmente en escenarios de alta concurrencia.
+- Manejo de Errores: La falta de un orquestador central puede complicar la gestión de errores y las respuestas ante fallos sistemáticos.
+- Requerimientos de Monitorización: Se necesita establecer soluciones efectivas para la monitorización y el registro de eventos, lo cual puede incrementar la carga operativa.
+- Curva de Aprendizaje: El equipo puede necesitar tiempo adicional para adaptarse al nuevo enfoque de microservicios y eventos, lo que puede retrasar el desarrollo inicial.
+- Sobrecarga Operativa: La necesidad de gestionar la comunicación entre servicios por eventos puede implicar una mayor carga operativa y la posibilidad de ciclos o problemas de orquestación.
